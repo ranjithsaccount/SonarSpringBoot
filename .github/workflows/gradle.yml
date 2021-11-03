@@ -27,13 +27,18 @@ jobs:
     - name: Build with Gradle
       id: build
       run: ./gradlew build
+      continue-on-error: true
     - name: Build unit test
       id: test
       run: |
           ./gradlew test
           ./gradlew test --status
       continue-on-error: true
-    - name: Unit Testcase Status check
-      if: steps.test.outcome == 'success'
-      run: echo "UnitTesting for the Build has been completed successfully"
-      
+    - name: Check on Success
+      if: steps.build.outcome == 'success' && steps.test.outcome == 'success'
+      run: echo "Build and Unit testing of job has been completed successfully."
+    - name: Check on Failure
+      if: steps.build.outcome == 'failure' || steps.test.outcome == 'failure'
+      run: |
+        echo "Build or testing components of the job has been failed."
+        exit 1    
