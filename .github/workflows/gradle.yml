@@ -25,8 +25,15 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
+      id: build
       run: ./gradlew build
     - name: Build unit test
+      id: test
       run: |
           ./gradlew test
           ./gradlew test --status
+      continue-on-error: true
+    - name: Unit Testcase Status check
+      if: steps.test.outcome == 'success'
+      run: echo "UnitTesting for the Build has been completed successfully"
+      
